@@ -20,11 +20,17 @@ img_element.src = "img/start.png";
 function start_gallery(){
      if(!image_ready || !comments_ready)
           return;
+
+     lastPostsCanvas = document.getElementById("lastPostsCanvas");
+     lpctx = lastPostsCanvas.getContext("2d");
+
      ctx.font = "'Oxygen', sans-serif";
      pctx.font = "'Oxygen', sans-serif";
      ctx2.font = "'Oxygen', sans-serif";
+     lpctx.font = "'Oxygen', sans-serif";
      var image_data = get_image_data(img_element);
      put_image_in_center(image_data);
+     draw_last_posts();
 }
 
 var current_x, current_y;
@@ -125,6 +131,16 @@ function draw_image_from_data_post(imgData, screen_x, screen_y, text1, text2){
      pctx.fillStyle = "black"
      pctx.fillText(text1, screen_x+5, screen_y+110);
      pctx.fillText(text2, screen_x+5, screen_y+124);
+}
+function draw_image_posts(img, screen_x, screen_y, text1, text2){
+     lpctx.drawImage(img, screen_x, screen_y, 128, 95);
+
+     lpctx.fillStyle = "white";
+     lpctx.fillRect(screen_x, screen_y+95, 128, 33);
+
+     lpctx.fillStyle = "black"
+     lpctx.fillText(text1, screen_x+5, screen_y+110);
+     lpctx.fillText(text2, screen_x+5, screen_y+124);
 }
 
 function next_half_image(imgData){
@@ -260,6 +276,7 @@ function resize_things(){
 
           lastPostsCanvas.width = 0.4*window.innerWidth-90;
           lastPostsCanvas.height = lastPostsCanvas.width*5;
+          lpctx.scale(lastPostsCanvas.width/261, lastPostsCanvas.width/261);
      }
      if(loaded)
           draw_images();

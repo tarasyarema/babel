@@ -41,6 +41,7 @@ document.getElementById("postComment").onclick = function(){
                all_comments[image] = ghostComment.value;
                draw_images();
                togglePostButton(true);
+               draw_last_posts();
           });
      }
 }
@@ -51,6 +52,17 @@ function togglePostButton(state){
           document.getElementById("postComment").removeAttribute("disabled");
      }
 }
+var lastPostsCanvas, lpctx;
 
-var lastPostsCanvas = document.getElementById("lastPostsCanvas");
-var lpctx = lastPostsCanvas.getContext("2d");
+function draw_last_posts(){
+     var keys = Object.keys(all_comments);
+     for(var i=Math.min(keys.length-1, 9); i>=0; i--){
+          var img = new Image();
+          img.onload = function(i){
+               var cmt1, cmt2;
+               [cmt1, cmt2] = get_text_lines(all_comments[keys[i]]);
+               draw_image_posts(img, i%2 == 0 ? 0 : 133, Math.floor(i/5)*133, cmt1, cmt2);
+          }(i);
+          img.src = keys[i];
+     }
+}
