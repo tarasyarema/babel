@@ -1,9 +1,21 @@
-#rightTab{
+#rightMostTab{
 	position: absolute;
 	top: 0;
 	right: 0;
+	bottom: 0;
+	width: 48px;
+	padding: 10px;
+	background: #ccc;
+	border-left: 1px solid #666;
+}
+#rightTab{
+	position: absolute;
+	top: 0;
+	right: 69;
+	bottom: 0;
 	width: 40%;
 	padding: 10px;
+	border-left: 1px solid #666;
 }
 #leftTab{
 	position: absolute;
@@ -41,7 +53,7 @@ input[type="file"] {
 	border: 1px solid #9b9;
 	color: #464;
 	border-radius: 2px;
-	padding: 10px 20px;
+	padding: 10px 14px;
 	font-size: 18px;
 	margin: 5px;
 }

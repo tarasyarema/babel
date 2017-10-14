@@ -9,28 +9,39 @@ var ctx2 = canvas2.getContext("2d");
 
 resize_things();
 
-var draw_count;
+var draw_count, draw_count_target;
 var img_element = document.getElementById("hidden_image");
 img_element.onload = function(){
-     ctx.scale(scale, scale);
      var image_data = get_image_data(img_element);
      put_image_in_center(image_data);
 }
 
-function put_image_in_center(image_data){
+var current_x, current_y;
+function put_image_in_center(image_data, of_x, of_y){
      var half_images = image_to_half_images(image_data);
-     var coords_x = [half_images[0]];
-     var coords_y = [half_images[1]];
-     for(var y=1; y<3; y++)
-          coords_y[y] = next_half_image(coords_y[y-1]);
-     for(var x=1; x<5; x++)
-          coords_x[x] = next_half_image(coords_x[x-1]);
+     current_x = half_images[0];
+     current_y = half_images[1];
+     draw_images();
+}
 
+function draw_images(){
+     ctx.clearRect(0, 0, canvas.width, canvas.height);
+     var maxX = Math.ceil((canvas.width/scale-5)/133/2);
+     var coords_x = [];
+     coords_x[maxX] = current_x;
+     var coords_y = [previous_half_image(current_y), current_y, next_half_image(current_y)];
+     for(var x=maxX+1; x<=2*maxX; x++)
+          coords_x[x] = next_half_image(coords_x[x-1]);
+     for(var x=maxX-1; x>=0; x--)
+          coords_x[x] = previous_half_image(coords_x[x+1]);
+
+     var offsetX = -133*maxX+(canvas.width/scale-133)/2;
      draw_count = 0;
+     draw_count_target = 3*(2*maxX+1);
      for(var y=0; y<3; y++){
-          for(var x=0; x<5; x++){
+          for(var x=0; x<=2*maxX; x++){
                var imgData = half_images_to_image(coords_x[x], coords_y[y]);
-               draw_image_from_data(imgData, 5+x*133, 5+y*133, "Hello, this is my", "world...");
+               draw_image_from_data_no_resize(imgData, offsetX+x*133, 5+y*133, "Hello, this is my", "world...");
           }
      }
 }
@@ -52,7 +63,7 @@ function draw_image(img, screen_x, screen_y, text1, text2){
      ctx.fillText(text2, screen_x+10, screen_y+2*124);
 }
 
-function draw_image_from_data(imgData, screen_x, screen_y, text1, text2){
+function draw_image_from_data_with_dom(imgData, screen_x, screen_y, text1, text2){
      ctx2.putImageData(imgData, 0, 0);
      var new_img_element = document.createElement("img");
      new_img_element.onload = function(){
@@ -67,10 +78,45 @@ function draw_image_from_data(imgData, screen_x, screen_y, text1, text2){
           ctx.fillText(text2, screen_x+10, screen_y+124);
 
           draw_count++;
-          if(draw_count == 15)
-               draw_scrollbars_at(imgData);
+          if(draw_count == draw_count_target)
+               draw_scrollbars();
      }
      new_img_element.src = canvas2.toDataURL();
+}
+function draw_image_from_data_without_dom(imgData, screen_x, screen_y, text1, text2){
+     ctx2.putImageData(imgData, 0, 0);
+     var new_img_element = document.createElement("img");
+     new_img_element.onload = function(){
+          ctx.drawImage(new_img_element, screen_x, screen_y);
+
+          ctx.fillStyle = "white";
+          ctx.fillRect(screen_x, screen_y+95, 128, 33);
+
+          ctx.fillStyle = "black"
+          ctx.font = "13px Arial";
+          ctx.fillText(text1, screen_x+10, screen_y+110);
+          ctx.fillText(text2, screen_x+10, screen_y+124);
+
+          draw_count++;
+          if(draw_count == draw_count_target)
+               draw_scrollbars();
+     }
+     new_img_element.src = canvas2.toDataURL();
+}
+function draw_image_from_data_no_resize(imgData, screen_x, screen_y, text1, text2){
+     ctx.putImageData(imgData, screen_x, screen_y);
+
+     ctx.fillStyle = "white";
+     ctx.fillRect(screen_x, screen_y+95, 128, 33);
+
+     ctx.fillStyle = "black"
+     ctx.font = "13px Arial";
+     ctx.fillText(text1, screen_x+10, screen_y+110);
+     ctx.fillText(text2, screen_x+10, screen_y+124);
+
+     draw_count++;
+     if(draw_count == draw_count_target)
+          draw_scrollbars();
 }
 
 function next_half_image(imgData){
@@ -103,18 +149,26 @@ function next_half_image(imgData){
 function previous_half_image(imgData){
      var result = new ImageData(imgData.width, imgData.height);
      result.data = new Uint8ClampedArray(imgData.data.length);
-     for(var i=imgData.data.length-4; i>=0; i-=4){
-          if(imgData[i+2] > 0){
-               imgData[i+2]--;
+     for(var i=0; i<result.data.length; i++)
+          result.data[i] = imgData.data[i];
+     for(var i=result.data.length-4; i>=0; i-=4){
+          if(result.data[i+2] > 0){
+               result.data[i+2]--;
                break;
+          }else{
+               result.data[i+2] = 255;
           }
-          if(imgData[i+1] > 0){
-               imgData[i+1]--;
+          if(result.data[i+1] > 0){
+               result.data[i+1]--;
                break;
+          }else{
+               result.data[i+1] = 255;
           }
-          if(imgData[i] > 0){
-               imgData[i]--;
+          if(result.data[i] > 0){
+               result.data[i]--;
                break;
+          }else{
+               result.data[i] = 255;
           }
      }
      return result;
@@ -154,26 +208,74 @@ function image_to_half_images(imgData){
      return [result1, result2];
 }
 
-function draw_scrollbars_at(imgData){
+var scrollbar_x = [];
+var scrollbar_y = [];
+function draw_scrollbars(){
      var place_x = 0, place_y = 0;
-     place_x = 256*256*imgData.data[0]+256*imgData.data[1]+imgData.data[2];
-     place_y = 256*256*imgData.data[4]+256*imgData.data[5]+imgData.data[6];
-
+     place_x = (current_x.data[0] << 16)+(current_x.data[1] << 8)+current_x.data[2];
+     place_y = (current_y.data[4] << 16)+(current_y.data[5] << 8)+current_y.data[6];
      place_x = canvas.width/scale*place_x/16777216;
      place_y = canvas.height/scale*place_y/16777216;
      ctx.fillRect(place_x-10, canvas.height/scale-6, 20, 6);
      ctx.fillRect(canvas.width/scale-6, place_y-10, 6, 20);
+     scrollbar_x = [place_x-10, canvas.height/scale-6, place_x-10+20, canvas.height/scale-6+6];
+     scrollbar_y = [canvas.width/scale-6, place_y-10, canvas.width/scale-6+6, place_y-10+20];
 }
 
 
 function resize_things(){
      canvas.width = 0.6*window.innerWidth;
      canvas.height = window.innerHeight;
+     scale = canvas.height/(3*133+5);
+     ctx.scale(scale, scale);
 
-     document.getElementById("rightTab").style.width = 0.4*window.innerWidth-20;
-     document.getElementById("my_camera").style.width = 0.4*window.innerWidth-20;
-     document.getElementById("my_camera").style.height = 0.75*(0.4*window.innerWidth-20);
-     document.querySelector("#my_camera video").style.width = 0.4*window.innerWidth-20;
-     document.querySelector("#my_camera video").style.height = 0.75*(0.4*window.innerWidth-20);
+     document.getElementById("rightTab").style.width = 0.4*window.innerWidth-90;
+     document.getElementById("my_camera").style.width = 0.4*window.innerWidth-90;
+     document.getElementById("my_camera").style.height = 0.75*(0.4*window.innerWidth-90);
+     document.querySelector("#my_camera video").style.width = 0.4*window.innerWidth-90;
+     document.querySelector("#my_camera video").style.height = 0.75*(0.4*window.innerWidth-90);
 }
 window.onresize = resize_things;
+
+function load_half_image_at_proportion(place){
+     var result = new ImageData(64, 95);
+     var size = 64*95*4;
+     result.data = new Uint8ClampedArray(size);
+     var prop = parseInt(place*256*256*256);
+     result.data[0] = (prop & (255 << 16)) >> 16;
+     result.data[1] = (prop & (255 <<  8)) >> 8;
+     result.data[2] = prop & 255;
+     result.data[2] = 255;
+     for(var i=4; i<size; i+=4){
+          result.data[i] = parseInt(256*Math.random());
+          result.data[i+1] = parseInt(256*Math.random());
+          result.data[i+2] = parseInt(256*Math.random());
+          result.data[i+3] = 255;
+     }
+     return result;
+}
+
+
+var on_scroll = 0;
+canvas.onmousedown = function(e){
+     var cx = e.clientX/scale;
+     var cy = e.clientY/scale;
+     if(cx >= scrollbar_x[0] && cy >= scrollbar_x[1] && cx <= scrollbar_x[2] && cy <= scrollbar_x[3]){
+          on_scroll = 1;
+     }else if(cx >= scrollbar_y[0] && cy >= scrollbar_y[1] && cx <= scrollbar_y[2] && cy <= scrollbar_y[3]){
+          on_scroll = 2;
+     }else
+          on_scroll = 0;
+}
+canvas.onmouseup = function(){
+     on_scroll = 0;
+}
+canvas.onmousemove = function(e){
+     if(on_scroll == 1){
+          current_x = load_half_image_at_proportion(e.clientX/canvas.width);
+          draw_images();
+     }else if(on_scroll == 2){
+          current_y = load_half_image_at_proportion(e.clientY/canvas.height);
+          draw_images();
+     }
+}
