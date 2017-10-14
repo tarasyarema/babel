@@ -41,7 +41,7 @@ function draw_images(){
      for(var y=0; y<3; y++){
           for(var x=0; x<=2*maxX; x++){
                var imgData = half_images_to_image(coords_x[x], coords_y[y]);
-               draw_image_from_data_no_resize(imgData, offsetX+x*133, 5+y*133, "Hello, this is my", "world...");
+               draw_image_from_data_without_dom(imgData, offsetX+x*133, 5+y*133, "Hello, this is my", "world...");
           }
      }
 }
@@ -85,23 +85,20 @@ function draw_image_from_data_with_dom(imgData, screen_x, screen_y, text1, text2
 }
 function draw_image_from_data_without_dom(imgData, screen_x, screen_y, text1, text2){
      ctx2.putImageData(imgData, 0, 0);
-     var new_img_element = document.createElement("img");
-     new_img_element.onload = function(){
-          ctx.drawImage(new_img_element, screen_x, screen_y);
 
-          ctx.fillStyle = "white";
-          ctx.fillRect(screen_x, screen_y+95, 128, 33);
+     ctx.drawImage(canvas2, screen_x, screen_y);
 
-          ctx.fillStyle = "black"
-          ctx.font = "13px Arial";
-          ctx.fillText(text1, screen_x+10, screen_y+110);
-          ctx.fillText(text2, screen_x+10, screen_y+124);
+     ctx.fillStyle = "white";
+     ctx.fillRect(screen_x, screen_y+95, 128, 33);
 
-          draw_count++;
-          if(draw_count == draw_count_target)
-               draw_scrollbars();
-     }
-     new_img_element.src = canvas2.toDataURL();
+     ctx.fillStyle = "black"
+     ctx.font = "13px Arial";
+     ctx.fillText(text1, screen_x+10, screen_y+110);
+     ctx.fillText(text2, screen_x+10, screen_y+124);
+
+     draw_count++;
+     if(draw_count == draw_count_target)
+          draw_scrollbars();
 }
 function draw_image_from_data_no_resize(imgData, screen_x, screen_y, text1, text2){
      ctx.putImageData(imgData, screen_x, screen_y);
@@ -256,7 +253,7 @@ function load_half_image_at_proportion(place){
      return result;
 }
 
-var animation_duration_per_axis = 500;
+var animation_duration_per_axis = 600;
 var animation_start_time;
 var animation_to_x, animation_to_y, animation_from_x, animation_from_y;
 var animation_final_x, animation_final_y;
