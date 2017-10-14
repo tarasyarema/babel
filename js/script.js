@@ -6,8 +6,8 @@ var ctx = canvas.getContext("2d");
 
 var canvas2 = document.getElementById("secondaryCanvas");
 var ctx2 = canvas2.getContext("2d");
-
-resize_things();
+canvas2.width = 128;
+canvas2.height = 95;
 
 var draw_count, draw_count_target;
 var img_element = document.getElementById("hidden_image");
@@ -23,6 +23,8 @@ function start_gallery(){
 
      lastPostsCanvas = document.getElementById("lastPostsCanvas");
      lpctx = lastPostsCanvas.getContext("2d");
+
+     resize_things();
 
      ctx.font = "'Oxygen', sans-serif";
      pctx.font = "'Oxygen', sans-serif";
@@ -98,17 +100,6 @@ function get_image_data(img){
      return ctx2.getImageData(0, 0, 128, 95);
 }
 
-function draw_image(img, screen_x, screen_y, text1, text2){
-     ctx.drawImage(img, screen_x, screen_y, 2*128, 2*95);
-
-     ctx.fillStyle = "white";
-     ctx.fillRect(screen_x, screen_y+2*95, 2*128, 2*33);
-
-     ctx.fillStyle = "black"
-	ctx.font = 'serif 24pt Oxygen';
-     ctx.fillText(text1, screen_x+10, screen_y+2*110);
-     ctx.fillText(text2, screen_x+10, screen_y+2*124);
-}
 function draw_image_from_data_without_dom(imgData, screen_x, screen_y, text1, text2){
      ctx2.putImageData(imgData, 0, 0);
 
@@ -129,12 +120,12 @@ function draw_image_from_data_post(imgData, screen_x, screen_y, text1, text2){
      pctx.fillStyle = "white";
      pctx.fillRect(screen_x, screen_y+95, 128, 33);
 
-     pctx.fillStyle = "black"
+     pctx.fillStyle = "black";
      pctx.fillText(text1, screen_x+5, screen_y+110);
      pctx.fillText(text2, screen_x+5, screen_y+124);
 }
 function draw_image_posts(img, screen_x, screen_y, text1, text2){
-     lpctx.drawImage(img, screen_x, screen_y, 128, 95);
+     lpctx.drawImage(img, screen_x, screen_y);
 
      lpctx.fillStyle = "white";
      lpctx.fillRect(screen_x, screen_y+95, 128, 33);
@@ -276,11 +267,14 @@ function resize_things(){
           pctx.scale(postCanvas.width/128, postCanvas.width/128);
 
           lastPostsCanvas.width = 0.4*window.innerWidth-90;
-          lastPostsCanvas.height = lastPostsCanvas.width*5;
+          lastPostsCanvas.height = lastPostsCanvas.width*2.5;
           lpctx.scale(lastPostsCanvas.width/261, lastPostsCanvas.width/261);
      }
-     if(loaded)
+
+     if(loaded){
           draw_images();
+          draw_last_posts();
+     }
 }
 window.onresize = resize_things;
 

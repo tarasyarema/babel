@@ -55,14 +55,18 @@ function togglePostButton(state){
 var lastPostsCanvas, lpctx;
 
 function draw_last_posts(){
-     var keys = Object.keys(all_comments);
+     var keys = Object.keys(all_comments).reverse();
+     var img = [];
      for(var i=Math.min(keys.length-1, 9); i>=0; i--){
-          var img = new Image();
-          img.onload = function(i){
+          img[i] = new Image();
+          img[i].c_x = i%2 == 0 ? 0 : 133;
+          img[i].c_y = Math.floor(i/2)*133;
+          img[i].comment = all_comments[keys[i]];
+          img[i].onload = function(){
                var cmt1, cmt2;
-               [cmt1, cmt2] = get_text_lines(all_comments[keys[i]]);
-               draw_image_posts(img, i%2 == 0 ? 0 : 133, Math.floor(i/5)*133, cmt1, cmt2);
-          }(i);
-          img.src = keys[i];
+               [cmt1, cmt2] = get_text_lines(this.comment);
+               draw_image_posts(this, this.c_x, this.c_y, cmt1, cmt2);
+          };
+          img[i].src = keys[i];
      }
 }
