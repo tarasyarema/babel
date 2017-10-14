@@ -1,17 +1,22 @@
+var bar_invisible = true;
 $(function(){
+	Webcam.set({width: "320", height: "240"});
+	Webcam.attach('#my_camera');
+
+	$("#rightTab").hide();
 	$(".menuImg").click(function(){
 		var tabid = $(this).attr("tabid");
-		var invisible = !$("#rightTab").is(":visible");
-		if(tabid == "main" || invisible){
-			if(invisible){
-				$("#canvas").animate({width: 0.6*window.innerWidth}, 350);
-				$("#leftTab").animate({width: 0.6*window.innerWidth}, 350);
-			}else{
-				$("#canvas").animate({width: window.innerWidth-70}, 350);
-				$("#leftTab").animate({width: window.innerWidth-70}, 350);
-			}
-			$("#rightTab").animate({width:'toggle'},350);
+		if(tabid == "main"){
+			bar_invisible = !bar_invisible;
+			console.log(bar_invisible);
+			$("#rightTab").toggle();
+			resize_things();
 		}else{
+			if(bar_invisible){
+				$("#rightTab").show();
+				bar_invisible = false;
+				resize_things();
+			}
 			$(".menuTab").hide();
 			$("div#"+tabid).show();
 		}
