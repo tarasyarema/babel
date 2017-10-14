@@ -7,16 +7,22 @@ var ctx2 = canvas2.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-var img = document.getElementById("scream");
-img.onload = function(){
-     var image_data = get_image_data(img);
+var img_element = document.getElementById("scream");
+img_element.onload = function(){
+     ctx.scale(2, 2);
+     var image_data = get_image_data(img_element);
      var half_images = image_to_half_images(image_data);
      var coords_x = [half_images[0]];
      var coords_y = [half_images[1]];
+     for(var y=1; y<3; y++)
+          coords_y[y] = next_half_image(coords_y[y-1]);
+     for(var x=1; x<5; x++)
+          coords_x[x] = next_half_image(coords_x[x-1]);
+
      for(var y=0; y<3; y++){
           for(var x=0; x<5; x++){
-               
-               draw_image(img, 10+x*266, 10+y*266, "Hello, this is my", "world...");
+               var imgData = half_images_to_image(coords_x[x], coords_y[y]);
+               draw_image_from_data(imgData, 5+x*133, 5+y*133, "Hello, this is my", "world...");
           }
      }
 }
@@ -28,9 +34,6 @@ function get_image_data(img){
 
 function draw_image(img, screen_x, screen_y, text1, text2){
      ctx.drawImage(img, screen_x, screen_y, 2*128, 2*95);
-     var imgData = ctx.getImageData(screen_x, screen_y, 2*128, 2*95);
-     var half_images = image_to_half_images(imgData);
-     ctx.putImageData(half_images_to_image(half_images[0], half_images[1]), screen_x, screen_y);
 
      ctx.fillStyle = "white";
      ctx.fillRect(screen_x, screen_y+2*95, 2*128, 2*33);
@@ -41,30 +44,54 @@ function draw_image(img, screen_x, screen_y, text1, text2){
      ctx.fillText(text2, screen_x+10, screen_y+2*124);
 }
 
-function draw_image_from_data(imgData, screen_x, screen_y){
+function draw_image_from_data(imgData, screen_x, screen_y, text1, text2){
+     ctx2.putImageData(imgData, 0, 0);
+     var new_img_element = document.createElement("img");
+     new_img_element.onload = function(){
+          ctx.drawImage(new_img_element, screen_x, screen_y);
 
+          ctx.fillStyle = "white";
+          ctx.fillRect(screen_x, screen_y+95, 128, 33);
+
+          ctx.fillStyle = "black"
+          ctx.font = "13px Arial";
+          ctx.fillText(text1, screen_x+10, screen_y+110);
+          ctx.fillText(text2, screen_x+10, screen_y+124);
+     }
+     new_img_element.src = canvas2.toDataURL();
 }
 
 function next_half_image(imgData){
-     var result = imgData;
-     for(var i=imgData.length-4; i>=0; i-=4){
-          if(imgData[i+2] < 255){
-               imgData[i+2]++;
+     var result = new ImageData(imgData.width, imgData.height);
+     result.data = new Uint8ClampedArray(imgData.data.length);
+     for(var i=0; i<result.data.length; i++)
+          result.data[i] = imgData.data[i];
+     for(var i=result.data.length-4; i>=0; i-=4){
+          if(result.data[i+2] < 255){
+               result.data[i+2]++;
                break;
+          }else{
+               result.data[i+2] = 0;
           }
-          if(imgData[i+1] < 255){
-               imgData[i+1]++;
+          if(result.data[i+1] < 255){
+               result.data[i+1]++;
                break;
+          }else{
+               result.data[i+1] = 0;
           }
-          if(imgData[i] < 255){
-               imgData[i]++;
+          if(result.data[i] < 255){
+               result.data[i]++;
                break;
+          }else{
+               result.data[i] = 0;
           }
      }
+     return result;
 }
 function previous_half_image(imgData){
-     var result = imgData;
-     for(var i=imgData.length-4; i>=0; i-=4){
+     var result = new ImageData(imgData.width, imgData.height);
+     result.data = new Uint8ClampedArray(imgData.data.length);
+     for(var i=imgData.data.length-4; i>=0; i-=4){
           if(imgData[i+2] > 0){
                imgData[i+2]--;
                break;
@@ -78,6 +105,7 @@ function previous_half_image(imgData){
                break;
           }
      }
+     return result;
 }
 function half_images_to_image(imgData1, imgData2){
      var result = new ImageData(imgData1.width*2, imgData1.height);
