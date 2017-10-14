@@ -16,7 +16,7 @@ img_element.onload = function(){
      image_ready = true;
      start_gallery();
 }
-img_element.src = "img/img_the_scream.jpg";
+img_element.src = "img/start.png";
 function start_gallery(){
      if(!image_ready || !comments_ready)
           return;
@@ -59,7 +59,9 @@ function draw_images(){
           }
      }
      draw_scrollbars();
-     draw_image_from_data_post(half_images_to_image(current_x, current_y), 0, 0, "", "");
+     var imgData = half_images_to_image(current_x, current_y);
+     draw_image_from_data_post(imgData, 0, 0, "", "");
+     togglePostButton(get_comment_for_image(imgData) != "");
 }
 function get_text_lines(full_comment){
      var cmt1, cmt2;
@@ -250,11 +252,14 @@ function resize_things(){
                document.querySelector("#my_camera video").style.height = 0.75*(0.4*window.innerWidth-90);
           }
 
-          postCanvas.width  = Math.min(0.4*window.innerWidth-90, 300);
+          postCanvas.width  = 0.3*window.innerWidth-90;
           postCanvas.height = postCanvas.width;
           ghostComment.style.width  = postCanvas.width;
           ghostComment.style.height = postCanvas.width;
           pctx.scale(postCanvas.width/128, postCanvas.width/128);
+
+          lastPostsCanvas.width = 0.4*window.innerWidth-90;
+          lastPostsCanvas.height = lastPostsCanvas.width*5;
      }
      if(loaded)
           draw_images();

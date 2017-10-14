@@ -45,6 +45,9 @@
 #postCanvas {
 	border: 1px solid;
 }
+#comments{
+	overflow: auto;
+}
 
 #secondaryCanvas {
 	display: none;

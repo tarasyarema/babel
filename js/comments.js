@@ -40,9 +40,17 @@ document.getElementById("postComment").onclick = function(){
           $.post("php/post.php", {image: image, comment: ghostComment.value}, function(data){
                all_comments[image] = ghostComment.value;
                draw_images();
+               togglePostButton(true);
           });
      }
 }
 function togglePostButton(state){
-     document.getElementById("postComment").setAttribute("disabled", "disabled");
+     if(state)
+          document.getElementById("postComment").setAttribute("disabled", "disabled");
+     else {
+          document.getElementById("postComment").removeAttribute("disabled");
+     }
 }
+
+var lastPostsCanvas = document.getElementById("lastPostsCanvas");
+var lpctx = lastPostsCanvas.getContext("2d");
