@@ -39,7 +39,7 @@ function draw_images(){
      var maxX = Math.ceil((canvas.width/scale-5)/133/2);
      var coords_x = [];
      coords_x[maxX] = current_x;
-     var coords_y = [next_half_image(current_y), current_y, previous_half_image(current_y)];
+     var coords_y = [previous_half_image(current_y), current_y, next_half_image(current_y)];
      for(var x=maxX+1; x<=2*maxX; x++)
           coords_x[x] = next_half_image(coords_x[x-1]);
      for(var x=maxX-1; x>=0; x--)
@@ -242,8 +242,8 @@ function get_proportion_from_image(imgData){
 }
 function draw_scrollbars(){
      var place_x = 0, place_y = 0;
-     place_x = canvas.width/scale  * get_proportion_from_image(current_x);
-     place_y = canvas.height/scale * get_proportion_from_image(current_y);
+     place_x = 10+(canvas.width/scale -20) * get_proportion_from_image(current_x);
+     place_y = 10+(canvas.height/scale-20) * get_proportion_from_image(current_y);
      ctx.fillRect(place_x-10, canvas.height/scale-6, 20, 6);
      ctx.fillRect(canvas.width/scale-6, place_y-10, 6, 20);
      scrollbar_x = [place_x-10, canvas.height/scale-6, place_x-10+20, canvas.height/scale-6+6];
@@ -280,16 +280,32 @@ function load_half_image_at_proportion(place){
      var result = new ImageData(64, 95);
      var size = 64*95*4;
      result.data = new Uint8ClampedArray(size);
-     var prop = parseInt(place*256*256*256);
-     result.data[0] = (prop & (255 << 16)) >> 16;
-     result.data[1] = (prop & (255 <<  8)) >> 8;
-     result.data[2] = prop & 255;
-     result.data[2] = 255;
-     for(var i=4; i<size; i+=4){
-          result.data[i] = parseInt(256*Math.random());
-          result.data[i+1] = parseInt(256*Math.random());
-          result.data[i+2] = parseInt(256*Math.random());
-          result.data[i+3] = 255;
+     if(place == 0){
+          for(var i=0; i<size; i+=4){
+               result.data[i]   = 0;
+               result.data[i+1] = 0;
+               result.data[i+2] = 0;
+               result.data[i+3] = 255;
+          }
+     }else if(place == 1){
+          for(var i=0; i<size; i+=4){
+               result.data[i]   = 255;
+               result.data[i+1] = 255;
+               result.data[i+2] = 255;
+               result.data[i+3] = 255;
+          }
+     }else{
+          var prop = parseInt(place*256*256*256);
+          result.data[0] = (prop & (255 << 16)) >> 16;
+          result.data[1] = (prop & (255 <<  8)) >> 8;
+          result.data[2] = prop & 255;
+          result.data[2] = 255;
+          for(var i=4; i<size; i+=4){
+               result.data[i] = parseInt(256*Math.random());
+               result.data[i+1] = parseInt(256*Math.random());
+               result.data[i+2] = parseInt(256*Math.random());
+               result.data[i+3] = 255;
+          }
      }
      return result;
 }
@@ -357,10 +373,20 @@ window.onmouseup = function(){
 }
 window.onmousemove = function(e){
      if(on_scroll == 1){
-          current_x = load_half_image_at_proportion(e.clientX/canvas.width);
+          var p = (e.clientX-10*scale)/(canvas.width-20*scale);
+          if(p > 1)
+               p = 1;
+          else if(p < 0)
+               p = 0;
+          current_x = load_half_image_at_proportion(p);
           draw_images();
      }else if(on_scroll == 2){
-          current_y = load_half_image_at_proportion(e.clientY/canvas.height);
+          var p = (e.clientY-10*scale)/(canvas.height-20*scale);
+          if(p > 1)
+               p = 1;
+          else if(p < 0)
+               p = 0;
+          current_y = load_half_image_at_proportion(p);
           draw_images();
      }
 }
@@ -371,7 +397,7 @@ window.onkeydown = function(e){
                draw_images();
                break;
           case 38: // Up
-               current_y = next_half_image(current_y);
+               current_y = previous_half_image(current_y);
                draw_images();
                break;
           case 39: // Right
@@ -379,7 +405,7 @@ window.onkeydown = function(e){
                draw_images();
                break;
           case 40: // Down
-               current_y = previous_half_image(current_y);
+               current_y = next_half_image(current_y);
                draw_images();
                break;
      }
