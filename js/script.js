@@ -7,6 +7,9 @@ var ctx = canvas.getContext("2d");
 var canvas2 = document.getElementById("secondaryCanvas");
 var ctx2 = canvas2.getContext("2d");
 
+var postCanvas = document.getElementById("postCanvas");
+var pctx = postCanvas.getContext("2d");
+
 resize_things();
 
 var draw_count, draw_count_target;
@@ -16,11 +19,11 @@ img_element.onload = function(){
      image_ready = true;
      start_gallery();
 }
+img_element.src = "img/img_the_scream.jpg";
 function start_gallery(){
      if(!image_ready || !comments_ready)
           return;
-
-     ctx.font = '26px "Trebuchet MS", Helvetica, sans-serif';
+     ctx.font = "'Oxygen', sans-serif";
      var image_data = get_image_data(img_element);
      put_image_in_center(image_data);
 }
@@ -75,6 +78,8 @@ function draw_images(){
                draw_image_from_data_without_dom(imgData, offsetX+x*133, 5+y*133, cmt1, cmt2);
           }
      }
+     draw_scrollbars();
+     draw_image_from_data_post(half_images_to_image(current_x, current_y), 0, 0, "", "");
 }
 
 function get_image_data(img){
@@ -92,27 +97,6 @@ function draw_image(img, screen_x, screen_y, text1, text2){
      ctx.fillText(text1, screen_x+10, screen_y+2*110);
      ctx.fillText(text2, screen_x+10, screen_y+2*124);
 }
-
-function draw_image_from_data_with_dom(imgData, screen_x, screen_y, text1, text2){
-     ctx2.putImageData(imgData, 0, 0);
-     var new_img_element = document.createElement("img");
-     new_img_element.onload = function(){
-          ctx.drawImage(new_img_element, screen_x, screen_y);
-
-          ctx.fillStyle = "white";
-          ctx.fillRect(screen_x, screen_y+95, 128, 33);
-
-          ctx.fillStyle = "black"
-          ctx.font = "13px Arial";
-          ctx.fillText(text1, screen_x+10, screen_y+110);
-          ctx.fillText(text2, screen_x+10, screen_y+124);
-
-          draw_count++;
-          if(draw_count == draw_count_target)
-               draw_scrollbars();
-     }
-     new_img_element.src = canvas2.toDataURL();
-}
 function draw_image_from_data_without_dom(imgData, screen_x, screen_y, text1, text2){
      ctx2.putImageData(imgData, 0, 0);
 
@@ -122,28 +106,20 @@ function draw_image_from_data_without_dom(imgData, screen_x, screen_y, text1, te
      ctx.fillRect(screen_x, screen_y+95, 128, 33);
 
      ctx.fillStyle = "black"
-     ctx.font = '13px "Trebuchet MS", Helvetica, sans-serif';
      ctx.fillText(text1, screen_x+5, screen_y+110);
      ctx.fillText(text2, screen_x+5, screen_y+124);
-
-     draw_count++;
-     if(draw_count == draw_count_target)
-          draw_scrollbars();
 }
-function draw_image_from_data_no_resize(imgData, screen_x, screen_y, text1, text2){
-     ctx.putImageData(imgData, screen_x, screen_y);
+function draw_image_from_data_post(imgData, screen_x, screen_y, text1, text2){
+     ctx2.putImageData(imgData, 0, 0);
 
-     ctx.fillStyle = "white";
-     ctx.fillRect(screen_x, screen_y+95, 128, 33);
+     pctx.drawImage(canvas2, screen_x, screen_y);
 
-     ctx.fillStyle = "black"
-     ctx.font = "13px Arial";
-     ctx.fillText(text1, screen_x+10, screen_y+110);
-     ctx.fillText(text2, screen_x+10, screen_y+124);
+     pctx.fillStyle = "white";
+     pctx.fillRect(screen_x, screen_y+95, 128, 33);
 
-     draw_count++;
-     if(draw_count == draw_count_target)
-          draw_scrollbars();
+     pctx.fillStyle = "black"
+     pctx.fillText(text1, screen_x+5, screen_y+110);
+     pctx.fillText(text2, screen_x+5, screen_y+124);
 }
 
 function next_half_image(imgData){
@@ -258,7 +234,7 @@ function resize_things(){
           scale = canvas.height/(3*133+5);
           ctx.scale(scale, scale);
      }else{
-          canvas.width = 0.6*window.innerWidth;
+          canvas.width = 0.6*window.innerWidth+1;
           canvas.height = window.innerHeight;
           scale = canvas.height/(3*133+5);
           ctx.scale(scale, scale);
@@ -270,6 +246,9 @@ function resize_things(){
                document.querySelector("#my_camera video").style.width = 0.4*window.innerWidth-90;
                document.querySelector("#my_camera video").style.height = 0.75*(0.4*window.innerWidth-90);
           }
+
+          postCanvas.width  = Math.min(0.4*window.innerWidth-90, 300);
+          postCanvas.height = postCanvas.width;
      }
      if(loaded)
           draw_images();

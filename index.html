@@ -11,21 +11,20 @@
 	<body>
 		<script src="external/webcam.js"></script>
 		<div id="rightMostTab">
-			<div class="menuImg" tabid="main">
-				<img src="img/gallery_.png" width="40" height="40" alt="Gallery"/>
-			</div>
-			<br>	
-			<div class="menuImg" tabid="imageSearch">
-				<img src="img/search_.png" width="40" height="40" alt="Search"/>
-			</div>
-			<br>
-			<div class="menuImg" tabid="comments">
-				<img src="img/comments_.png" width="40" height="40" alt="Comments"/>
-			</div>
-			<br>
-			<div class="menuImg" tabid="about">
-				<img src="img/about_.png" width="40" height="40" alt="About"/>
-			</div>
+			<center>
+				<br>
+				<div class="menuImg" tabid="imageSearch">
+					<img src="img/search_.png" width="40" height="40" alt="Search"/>
+				</div>
+				<br>
+				<div class="menuImg" tabid="comments">
+					<img src="img/comments_.png" width="40" height="40" alt="Comments"/>
+				</div>
+				<br>
+				<div class="menuImg" tabid="about">
+					<img src="img/about_.png" width="40" height="40" alt="About"/>
+				</div>
+			</center>
 		</div>
 		<div id="rightTab">
 			<div id="imageSearch" class="menuTab" style="display:none">
@@ -48,14 +47,17 @@
 				gallery, tal...
 			</div>
 			<div id="comments" class="menuTab" style="display:none">
-				epic comments here..
+				<center>
+					<canvas id="postCanvas"></canvas><br/>
+					<button disabled>Post</button>
+				</center>
 			</div>
 		</div>
 
 		<div id="leftTab">
 			<canvas id="canvas"></canvas>
 			<canvas id="secondaryCanvas"></canvas>
-			<img src="img/img_the_scream.jpg" id="hidden_image"/>
+			<img src="" id="hidden_image"/>
 			<script src="js/script.js"></script>
 		</div>
 
