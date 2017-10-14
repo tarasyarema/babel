@@ -11,7 +11,14 @@ resize_things();
 
 var draw_count, draw_count_target;
 var img_element = document.getElementById("hidden_image");
+var image_ready = false;
 img_element.onload = function(){
+     image_ready = true;
+     start_gallery();
+}
+function start_gallery(){
+     if(!image_ready || !comments_ready)
+          return;
      var image_data = get_image_data(img_element);
      put_image_in_center(image_data);
 }
@@ -41,7 +48,7 @@ function draw_images(){
      for(var y=0; y<3; y++){
           for(var x=0; x<=2*maxX; x++){
                var imgData = half_images_to_image(coords_x[x], coords_y[y]);
-               draw_image_from_data_without_dom(imgData, offsetX+x*133, 5+y*133, "Hello, this is my", "world...");
+               draw_image_from_data_without_dom(imgData, offsetX+x*133, 5+y*133, get_comment_for_image(imgData), "");
           }
      }
 }
