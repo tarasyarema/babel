@@ -1,6 +1,11 @@
 var bar_invisible = true;
 $(function(){
-	Webcam.set({width: "320", height: "240"});
+	Webcam.set({
+		width: "320", 
+		height: "240",
+		flip_horiz: true,
+		fps: 60
+	});
 	Webcam.attach('#my_camera');
 
 	$("#rightTab").hide();
