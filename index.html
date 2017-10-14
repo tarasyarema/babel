@@ -1,41 +1,30 @@
 <html>
 <head>
-	<title>Lol</title>
-	<link href="style.css" rel="stylesheet" type="text/css">
-	<script src="test.js"></script>
+	<title>We gotcha!</title>
+<!--	<link href="css/style.css" rel="stylesheet" type="text/css">  -->
+	<script src="js/test.js"></script>
 </head>
 	<body>
-		<div>
-			<script src="webcam.js"></script>
-			<div id="my_camera" style="width:320px; height:240px;"></div>
-			<div id="my_result"></div>
-			<script type="text/javascript">
-			Webcam.attach( '#my_camera' );
-
-			    function take_snapshot() {
-			      Webcam.snap( function(data_uri) {
-			        document.getElementById('my_result').innerHTML = '<img src="'+data_uri+'"/>';
-			      } );
-			}
-			</script>
-			<a href="javascript:void(take_snapshot())">Take Snapshot</a>
+		<script src="external/webcam.js"></script>
+		<div id="webcam_div">
+		<div id="my_camera" style="width:320px; height:240px;"></div>
+		<div id="my_result"></div>
+		<script type="text/javascript"> Webcam.attach('#my_camera'); </script>
+		<a href="javascript:void(take_snapshot())">Take Snapshot</a>
 		</div>
 
-		<div>
+		<div id="upload_img_div">
 		<input id="test" type="file" onchange="get_file()"><br>
 		<img id="uploaded_image" src=""/>
 		<canvas id="test_canvas"></canvas>
 		</div>
 
-		<div>
+		<div id="grid_div">
 		<canvas id="canvas"></canvas>
 		<canvas id="secondaryCanvas"></canvas>
-
-		<img src="img_the_scream.jpg" id="scream"/>
-		<script src="script.js"></script>
+		<img src="img/img_the_scream.jpg" id="scream"/>
+		<script src="js/script.js"></script>
 		</div>
 
-		<script src="script.js"></script>
-		<!-- script src="webcam.js"></script> -->
 	</body>
 </html>
