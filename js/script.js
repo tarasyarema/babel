@@ -99,6 +99,7 @@ function draw_image(img, screen_x, screen_y, text1, text2){
      ctx.fillRect(screen_x, screen_y+2*95, 2*128, 2*33);
 
      ctx.fillStyle = "black"
+	ctx.font = 'serif 24pt Oxygen';
      ctx.fillText(text1, screen_x+10, screen_y+2*110);
      ctx.fillText(text2, screen_x+10, screen_y+2*124);
 }
