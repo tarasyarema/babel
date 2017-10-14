@@ -29,15 +29,18 @@
 		</div>
 		<div id="rightTab">
 			<div id="imageSearch" class="menuTab" style="display:none">
+				<div id="my_camera" style="width:320px; height:240px;"></div>
+				<div id="imageSearch_div">
 				<div id="webcam_div">
-					<div id="my_camera" style="width:320px; height:240px;"></div>
+					<!-- <div id="my_camera" style="width:320px; height:240px;"></div> -->
 					<button onclick="take_snapshot()">Take Snapshot</button>
 				</div>
 
 				<div id="upload_img_div">
-					<input id="test" type="file" onchange="get_file()"><br>
+					<input id="test" type="file" onchange="get_file()" value="Upload file"><br>
 					<img id="uploaded_image" src=""/>
 					<canvas id="test_canvas"></canvas>
+				</div>
 				</div>
 			</div>
 			<div id="about" class="menuTab" style="display:none">
