@@ -45,8 +45,8 @@ var Webcam = {
 	iOS: /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream,
 
 	params: {
-		width: 0,
-		height: 0,
+		width: 320,
+		height: 240,
 		dest_width: 0,         // size of captured image
 		dest_height: 0,        // these default to width/height
 		image_format: 'jpeg',  // image format (may be jpeg or png)

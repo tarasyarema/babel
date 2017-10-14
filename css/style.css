@@ -39,7 +39,8 @@
 }
 
 #hidden_image, #uploaded_image {
-	display: none;
+	opacity: 0;
+	position: absolute;
 }
 
 button {

@@ -32,6 +32,7 @@ function put_image_in_center(image_data, of_x, of_y){
 }
 
 function draw_images(){
+     loaded = true;
      ctx.clearRect(0, 0, canvas.width, canvas.height);
      var maxX = Math.ceil((canvas.width/scale-5)/133/2);
      var coords_x = [];
@@ -227,18 +228,29 @@ function draw_scrollbars(){
      scrollbar_y = [canvas.width/scale-6, place_y-10, canvas.width/scale-6+6, place_y-10+20];
 }
 
-
+var loaded = false;
 function resize_things(){
-     canvas.width = 0.6*window.innerWidth;
-     canvas.height = window.innerHeight;
-     scale = canvas.height/(3*133+5);
-     ctx.scale(scale, scale);
+     if(bar_invisible){
+          canvas.width = window.innerWidth-69;
+          canvas.height = window.innerHeight;
+          scale = canvas.height/(3*133+5);
+          ctx.scale(scale, scale);
+     }else{
+          canvas.width = 0.6*window.innerWidth;
+          canvas.height = window.innerHeight;
+          scale = canvas.height/(3*133+5);
+          ctx.scale(scale, scale);
 
-     document.getElementById("rightTab").style.width = 0.4*window.innerWidth-90;
-     document.getElementById("my_camera").style.width = 0.4*window.innerWidth-90;
-     document.getElementById("my_camera").style.height = 0.75*(0.4*window.innerWidth-90);
-     document.querySelector("#my_camera video").style.width = 0.4*window.innerWidth-90;
-     document.querySelector("#my_camera video").style.height = 0.75*(0.4*window.innerWidth-90);
+          document.getElementById("rightTab").style.width = 0.4*window.innerWidth-90;
+          document.getElementById("my_camera").style.width = 0.4*window.innerWidth-90;
+          document.getElementById("my_camera").style.height = 0.75*(0.4*window.innerWidth-90);
+          if(document.querySelector("#my_camera video")){
+               document.querySelector("#my_camera video").style.width = 0.4*window.innerWidth-90;
+               document.querySelector("#my_camera video").style.height = 0.75*(0.4*window.innerWidth-90);
+          }
+     }
+     if(loaded)
+          draw_images();
 }
 window.onresize = resize_things;
 
