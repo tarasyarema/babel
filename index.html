@@ -9,21 +9,21 @@
 	<body>
 		<script src="external/webcam.js"></script>
 		<div id="rightMostTab">
-			<div onclick="show_div('imageSearch', 'gallery')">
-				<img src="img/cuadrados.png" width="40" height="40" alt="Gallery"/>
+			<div class="menuImg" tab-id="">
+				<img src="img/cuadrados3.png" width="40" height="40" alt="Gallery"/>
 			</div>
-			<div onlcick="show_div('imageSearch', 'imageSearch')">
+			<div class="menuImg" tab-id="imageSearch">
 				<img src="img/lupa.png" width="40" height="40" alt="Search"/>
 			</div>
-			<div onclick="show_div('imageSearch', 'comments')">
+			<div class="menuImg" tab-id="comments">
 				<img src="img/comentam.png" width="40" height="40" alt="Comments"/>
 			</div>
-			<div onclick="show_div('imageSearch', 'about')">
+			<div class="menuImg" tab-id="about">
 				<img src="img/interrogante.png" width="40" height="40" alt="About"/>
 			</div>
 		</div>
 		<div id="rightTab">
-			<div id="imageSearch">
+			<div id="imageSearch" style="display:none">
 				<div id="webcam_div">
 					<div id="my_camera" style="width:320px; height:240px;"></div>
 					<script type="text/javascript"> Webcam.attach('#my_camera'); </script>
