@@ -210,12 +210,13 @@ function image_to_half_images(imgData){
 
 var scrollbar_x = [];
 var scrollbar_y = [];
+function get_proportion_from_image(imgData){
+     return ((imgData.data[0] << 16)+(imgData.data[1] << 8)+imgData.data[2])/16777216;
+}
 function draw_scrollbars(){
      var place_x = 0, place_y = 0;
-     place_x = (current_x.data[0] << 16)+(current_x.data[1] << 8)+current_x.data[2];
-     place_y = (current_y.data[4] << 16)+(current_y.data[5] << 8)+current_y.data[6];
-     place_x = canvas.width/scale*place_x/16777216;
-     place_y = canvas.height/scale*place_y/16777216;
+     place_x = canvas.width/scale  * get_proportion_from_image(current_x);
+     place_y = canvas.height/scale * get_proportion_from_image(current_y);
      ctx.fillRect(place_x-10, canvas.height/scale-6, 20, 6);
      ctx.fillRect(canvas.width/scale-6, place_y-10, 6, 20);
      scrollbar_x = [place_x-10, canvas.height/scale-6, place_x-10+20, canvas.height/scale-6+6];
@@ -255,9 +256,55 @@ function load_half_image_at_proportion(place){
      return result;
 }
 
+var animation_duration_per_axis = 500;
+var animation_start_time;
+var animation_to_x, animation_to_y, animation_from_x, animation_from_y;
+var animation_final_x, animation_final_y;
+function start_animation_towards(to_x, to_y){
+     animation_start_time = new Date().getTime();
+     animation_final_x = to_x;
+     animation_final_y = to_y;
+     animation_to_x = get_proportion_from_image(to_x);
+     animation_to_y = get_proportion_from_image(to_y);
+     animation_from_x = get_proportion_from_image(current_x);
+     animation_from_y = get_proportion_from_image(current_y);
+     do_animation_for_x();
+}
+
+function do_animation_for_x(){
+     var time = new Date().getTime();
+     var t = (time-animation_start_time)/animation_duration_per_axis;
+     if(t < 1){
+          t = 0.5-0.5*Math.cos(t*Math.PI);
+          var prop = animation_from_x+t*(animation_to_x-animation_from_x);
+          current_x = load_half_image_at_proportion(prop);
+          draw_images();
+          requestAnimationFrame(do_animation_for_x);
+     }else{
+          current_x = animation_final_x;
+          animation_start_time = new Date().getTime();
+          do_animation_for_y();
+     }
+}
+function do_animation_for_y(){
+     var time = new Date().getTime();
+     var t = (time-animation_start_time)/animation_duration_per_axis;
+     if(t < 1){
+          t = 0.5-0.5*Math.cos(t*Math.PI);
+          var prop = animation_from_y+t*(animation_to_y-animation_from_y);
+          current_y = load_half_image_at_proportion(prop);
+          draw_images();
+          requestAnimationFrame(do_animation_for_y);
+     }else{
+          current_y = animation_final_y;
+          draw_images();
+     }
+}
+
+
 
 var on_scroll = 0;
-canvas.onmousedown = function(e){
+window.onmousedown = function(e){
      var cx = e.clientX/scale;
      var cy = e.clientY/scale;
      if(cx >= scrollbar_x[0] && cy >= scrollbar_x[1] && cx <= scrollbar_x[2] && cy <= scrollbar_x[3]){
@@ -267,10 +314,10 @@ canvas.onmousedown = function(e){
      }else
           on_scroll = 0;
 }
-canvas.onmouseup = function(){
+window.onmouseup = function(){
      on_scroll = 0;
 }
-canvas.onmousemove = function(e){
+window.onmousemove = function(e){
      if(on_scroll == 1){
           current_x = load_half_image_at_proportion(e.clientX/canvas.width);
           draw_images();
