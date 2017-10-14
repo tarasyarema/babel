@@ -19,6 +19,8 @@ img_element.onload = function(){
 function start_gallery(){
      if(!image_ready || !comments_ready)
           return;
+
+     ctx.font = '26px "Trebuchet MS", Helvetica, sans-serif';
      var image_data = get_image_data(img_element);
      put_image_in_center(image_data);
 }
@@ -49,7 +51,28 @@ function draw_images(){
      for(var y=0; y<3; y++){
           for(var x=0; x<=2*maxX; x++){
                var imgData = half_images_to_image(coords_x[x], coords_y[y]);
-               draw_image_from_data_without_dom(imgData, offsetX+x*133, 5+y*133, get_comment_for_image(imgData), "");
+               var full_comment = get_comment_for_image(imgData);
+               var cmt1, cmt2;
+               if(full_comment != ""){
+                    var words = full_comment.split(" ");
+                    var str = words[0];
+                    var i;
+                    for(i=1; i<words.length; i++){
+                         if(ctx.measureText(str + " " + words[i]).width > 123){
+                              break;
+                         }
+                         str += " " + words[i];
+                    }
+                    cmt1 = str;
+                    cmt2 = "";
+                    for(var j=i; j<words.length; j++){
+                         cmt2 += " "+words[j];
+                    }
+               }else{
+                    cmt1 = "";
+                    cmt2 = "";
+               }
+               draw_image_from_data_without_dom(imgData, offsetX+x*133, 5+y*133, cmt1, cmt2);
           }
      }
 }
@@ -66,7 +89,6 @@ function draw_image(img, screen_x, screen_y, text1, text2){
      ctx.fillRect(screen_x, screen_y+2*95, 2*128, 2*33);
 
      ctx.fillStyle = "black"
-     ctx.font = '26px "Trebuchet MS", Helvetica, sans-serif';
      ctx.fillText(text1, screen_x+10, screen_y+2*110);
      ctx.fillText(text2, screen_x+10, screen_y+2*124);
 }
@@ -100,9 +122,9 @@ function draw_image_from_data_without_dom(imgData, screen_x, screen_y, text1, te
      ctx.fillRect(screen_x, screen_y+95, 128, 33);
 
      ctx.fillStyle = "black"
-     ctx.font = "13px Arial";
-     ctx.fillText(text1, screen_x+10, screen_y+110);
-     ctx.fillText(text2, screen_x+10, screen_y+124);
+     ctx.font = '13px "Trebuchet MS", Helvetica, sans-serif';
+     ctx.fillText(text1, screen_x+5, screen_y+110);
+     ctx.fillText(text2, screen_x+5, screen_y+124);
 
      draw_count++;
      if(draw_count == draw_count_target)
@@ -340,5 +362,25 @@ window.onmousemove = function(e){
      }else if(on_scroll == 2){
           current_y = load_half_image_at_proportion(e.clientY/canvas.height);
           draw_images();
+     }
+}
+window.onkeydown = function(e){
+     switch(e.keyCode){
+          case 37: // Left
+               current_x = previous_half_image(current_x);
+               draw_images();
+               break;
+          case 38: // Up
+               current_y = next_half_image(current_y);
+               draw_images();
+               break;
+          case 39: // Right
+               current_x = next_half_image(current_x);
+               draw_images();
+               break;
+          case 40: // Down
+               current_y = previous_half_image(current_y);
+               draw_images();
+               break;
      }
 }
