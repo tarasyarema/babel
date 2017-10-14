@@ -13,6 +13,9 @@
 	background: #bbb;
 	border-left: 1px solid #999;
 }
+.menuImg{
+	cursor: pointer;
+}
 #rightTab{
 	position: absolute;
 	top: 0;
