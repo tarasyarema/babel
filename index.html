@@ -11,21 +11,21 @@
 	<body>
 		<script src="external/webcam.js"></script>
 		<div id="rightMostTab">
-			<div class="menuImg" tab-id="">
+			<div class="menuImg" tabid="main">
 				<img src="img/gallery.png" width="40" height="40" alt="Gallery"/>
 			</div>
-			<div class="menuImg" tab-id="imageSearch">
+			<div class="menuImg" tabid="imageSearch">
 				<img src="img/search.png" width="40" height="40" alt="Search"/>
 			</div>
-			<div class="menuImg" tab-id="comments">
+			<div class="menuImg" tabid="comments">
 				<img src="img/comments.png" width="40" height="40" alt="Comments"/>
 			</div>
-			<div class="menuImg" tab-id="about">
+			<div class="menuImg" tabid="about">
 				<img src="img/about.png" width="40" height="40" alt="About"/>
 			</div>
 		</div>
 		<div id="rightTab">
-			<div id="imageSearch" style="display:none">
+			<div id="imageSearch" class="menuTab" style="display:none">
 				<div id="webcam_div">
 					<div id="my_camera" style="width:320px; height:240px;"></div>
 					<script type="text/javascript"> Webcam.attach('#my_camera'); </script>
@@ -38,14 +38,14 @@
 					<canvas id="test_canvas"></canvas>
 				</div>
 			</div>
-			<div id="about" style="display:none">
+			<div id="about" class="menuTab" style="display:none">
 				This project is about bla bla bla....
 				The number of images that
 			</div>
-			<div id="gallery" style="display:none">
+			<div id="gallery" class="menuTab" style="display:none">
 				gallery, tal...
 			</div>
-			<div id="comments" style="display:none">
+			<div id="comments" class="menuTab" style="display:none">
 				epic comments here..
 			</div>
 		</div>
