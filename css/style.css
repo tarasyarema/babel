@@ -22,7 +22,7 @@
 	display: none;
 }
 
-#scream {
+#hidden_image, #uploaded_image {
 	display: none;
 }
 

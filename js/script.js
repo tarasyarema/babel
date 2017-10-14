@@ -10,14 +10,14 @@ var ctx2 = canvas2.getContext("2d");
 resize_things();
 
 var draw_count;
-var img_element = document.getElementById("scream");
+var img_element = document.getElementById("hidden_image");
 img_element.onload = function(){
      ctx.scale(scale, scale);
      var image_data = get_image_data(img_element);
      put_image_in_center(image_data);
 }
 
-function put_image_in_center(img_data){
+function put_image_in_center(image_data){
      var half_images = image_to_half_images(image_data);
      var coords_x = [half_images[0]];
      var coords_y = [half_images[1]];
@@ -47,7 +47,7 @@ function draw_image(img, screen_x, screen_y, text1, text2){
      ctx.fillRect(screen_x, screen_y+2*95, 2*128, 2*33);
 
      ctx.fillStyle = "black"
-     ctx.font = "26px Arial";
+     ctx.font = '26px "Trebuchet MS", Helvetica, sans-serif';
      ctx.fillText(text1, screen_x+10, screen_y+2*110);
      ctx.fillText(text2, screen_x+10, screen_y+2*124);
 }

@@ -2,9 +2,12 @@ var BASE64_MARKER = ';base64,';
 
 function take_snapshot(){
 	Webcam.snap(function(data_uri){
-		document.getElementById('my_result').innerHTML = '<img src="'+data_uri+'"/>';
-		console.log(convertDataURIToBinary(data_uri));
-		//return convertDataURIToBinary(data_uri);
+	     var new_img_element = document.getElementById("hidden_image");
+		new_img_element.onload = function(){
+			var image_data = get_image_data(new_img_element);
+			put_image_in_center(image_data);
+		}
+		new_img_element.src = data_uri;
 	});
 }
 
@@ -16,6 +19,12 @@ function get_file(){
 
 	reader.onloadend = function(){
 		console.log(get_image_byte_array(reader.result).data);
+	     var new_img_element = document.getElementById("uploaded_image");
+		new_img_element.onload = function(){
+			var image_data = get_image_data(new_img_element);
+			put_image_in_center(image_data);
+		}
+		new_img_element.src = data_uri;
 	}
 
 	if(file) reader.readAsDataURL(file); //reads the data as a URL
@@ -38,6 +47,6 @@ function convertDataURIToBinary(dataURI) {
 	var array = new Uint8Array(new ArrayBuffer(raw.length));
 
 	for(var i = 0; i < raw.length; ++i) array[i] = raw.charCodeAt(i);
-  
+
 	return array;
 }
