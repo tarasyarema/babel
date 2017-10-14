@@ -1,3 +1,6 @@
+var scale = 2;
+
+
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 
@@ -7,9 +10,10 @@ var ctx2 = canvas2.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+var draw_count;
 var img_element = document.getElementById("scream");
 img_element.onload = function(){
-     ctx.scale(2, 2);
+     ctx.scale(scale, scale);
      var image_data = get_image_data(img_element);
      var half_images = image_to_half_images(image_data);
      var coords_x = [half_images[0]];
@@ -19,6 +23,7 @@ img_element.onload = function(){
      for(var x=1; x<5; x++)
           coords_x[x] = next_half_image(coords_x[x-1]);
 
+     draw_count = 0;
      for(var y=0; y<3; y++){
           for(var x=0; x<5; x++){
                var imgData = half_images_to_image(coords_x[x], coords_y[y]);
@@ -57,6 +62,10 @@ function draw_image_from_data(imgData, screen_x, screen_y, text1, text2){
           ctx.font = "13px Arial";
           ctx.fillText(text1, screen_x+10, screen_y+110);
           ctx.fillText(text2, screen_x+10, screen_y+124);
+
+          draw_count++;
+          if(draw_count == 15)
+               draw_scrollbars_at(imgData);
      }
      new_img_element.src = canvas2.toDataURL();
 }
@@ -140,4 +149,15 @@ function image_to_half_images(imgData){
      }
 
      return [result1, result2];
+}
+
+function draw_scrollbars_at(imgData){
+     var place_x = 0, place_y = 0;
+     place_x = 256*256*imgData.data[0]+256*imgData.data[1]+imgData.data[2];
+     place_y = 256*256*imgData.data[4]+256*imgData.data[5]+imgData.data[6];
+
+     place_x = canvas.width/scale*place_x/16777216;
+     place_y = canvas.height/scale*place_y/16777216;
+     ctx.fillRect(place_x-10, canvas.height/scale-6, 20, 6);
+     ctx.fillRect(canvas.width/scale-6, place_y-10, 6, 20);
 }
