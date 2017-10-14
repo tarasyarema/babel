@@ -11,10 +11,18 @@
 	<body>
 		<script src="external/webcam.js"></script>
 		<div id="rightMostTab">
-			<div>Gallery</div>
-			<div onlcick="console.log("Lupa")"> <img src="img/lupa.png" width="40" height="40" alt="Search"/></div>
-			<div onclick="console.log("Comentam")"><img src="img/comentam.png" width="40" height="40" alt="Comments" /></div>
-			<div onclick="console.log("About")">About</div>
+			<div onclick="show_div('imageSearch', 'gallery')">
+				<img src="img/cuadrados.png" width="40" height="40" alt="Gallery"/>
+			</div>
+			<div onlcick="show_div('imageSearch', 'imageSearch')">
+				<img src="img/lupa.png" width="40" height="40" alt="Search"/>
+			</div>
+			<div onclick="show_div('imageSearch', 'comments')">
+				<img src="img/comentam.png" width="40" height="40" alt="Comments"/>
+			</div>
+			<div onclick="show_div('imageSearch', 'about')">
+				<img src="img/interrogante.png" width="40" height="40" alt="About"/>
+			</div>
 		</div>
 		<div id="rightTab">
 			<div id="imageSearch">
@@ -30,8 +38,15 @@
 					<canvas id="test_canvas"></canvas>
 				</div>
 			</div>
-			<div id="about">
-				This project is about bla bla bla.... The number of images that
+			<div id="about" style="display:none">
+				This project is about bla bla bla....
+				The number of images that
+			</div>
+			<div id="gallery" style="display:none">
+				gallery, tal...
+			</div>
+			<div id="comments" style="display:none">
+				epic comments here..
 			</div>
 		</div>
 
