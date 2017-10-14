@@ -39,7 +39,7 @@ function draw_images(){
      var maxX = Math.ceil((canvas.width/scale-5)/133/2);
      var coords_x = [];
      coords_x[maxX] = current_x;
-     var coords_y = [previous_half_image(current_y), current_y, next_half_image(current_y)];
+     var coords_y = [next_half_image(current_y), current_y, previous_half_image(current_y)];
      for(var x=maxX+1; x<=2*maxX; x++)
           coords_x[x] = next_half_image(coords_x[x-1]);
      for(var x=maxX-1; x>=0; x--)
