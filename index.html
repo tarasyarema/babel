@@ -2,22 +2,42 @@
 <head>
 	<title>Lol</title>
 	<!-- <LINK href="style.css" rel="stylesheet" type="text/css"> -->
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
+	
 	<script src="test.js"></script>
-	<meta charset=utf-8 />
 </head>
 	<body>
+		<div>
+		    <script src="webcam.js"></script>
+
+			<div id="my_camera" style="width:320px; height:240px;"></div>
+			<div id="my_result"></div>
+
+			<script language="JavaScript">
+			    Webcam.attach( '#my_camera' );
+			    
+			    function take_snapshot() {
+			      Webcam.snap( function(data_uri) {
+			        document.getElementById('my_result').innerHTML = '<img src="'+data_uri+'"/>';
+			      } );
+			    }
+			</script>
+
+			<a href="javascript:void(take_snapshot())">Take Snapshot</a>
+		</div>
+
 		<div>
 		<input id="test" type="file" onchange="get_file()"><br>
 		<img id="uploaded_image" src=""/>
 		<canvas id="test_canvas"></canvas>
 		</div>
+		
 		<div>
 		<canvas id="canvas"></canvas>
 		<canvas id="secondaryCanvas"></canvas>
 		<img src="https://www.w3schools.com/tags/img_the_scream.jpg" id="scream"/>
-		<script src="script.js"></script>
 		</div>
+
+		<script src="script.js"></script>
+		<!-- script src="webcam.js"></script> -->
 	</body>
 </html>
