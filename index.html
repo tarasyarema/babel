@@ -2,9 +2,11 @@
 <head>
 	<title>We gotcha!</title>
 	<link href="https://fonts.googleapis.com/css?family=Archivo+Narrow" rel="stylesheet">
-	<link href="css/style.css" rel="stylesheet" type="text/css"> 
+	<link href="css/style.css" rel="stylesheet" type="text/css">
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 	<script src="js/test.js"></script>
-	<script src="js/style.js"></script>	
+	<script src="js/style.js"></script>
+	<script src="js/comments.js"></script>
 </head>
 	<body>
 		<script src="external/webcam.js"></script>
@@ -20,7 +22,7 @@
 					<div id="my_camera" style="width:320px; height:240px;"></div>
 					<script type="text/javascript"> Webcam.attach('#my_camera'); </script>
 					<button onclick="take_snapshot()">Take Snapshot</button>
-				</div>	
+				</div>
 
 				<div id="upload_img_div">
 					<input id="test" type="file" onchange="get_file()"><br>
@@ -29,7 +31,7 @@
 				</div>
 			</div>
 			<div id="about">
-				This project is about bla bla bla.... The number of images that 
+				This project is about bla bla bla.... The number of images that
 			</div>
 		</div>
 
