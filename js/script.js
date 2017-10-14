@@ -7,14 +7,17 @@ var ctx = canvas.getContext("2d");
 var canvas2 = document.getElementById("secondaryCanvas");
 var ctx2 = canvas2.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+resize_things();
 
 var draw_count;
 var img_element = document.getElementById("scream");
 img_element.onload = function(){
      ctx.scale(scale, scale);
      var image_data = get_image_data(img_element);
+     put_image_in_center(image_data);
+}
+
+function put_image_in_center(img_data){
      var half_images = image_to_half_images(image_data);
      var coords_x = [half_images[0]];
      var coords_y = [half_images[1]];
@@ -161,3 +164,16 @@ function draw_scrollbars_at(imgData){
      ctx.fillRect(place_x-10, canvas.height/scale-6, 20, 6);
      ctx.fillRect(canvas.width/scale-6, place_y-10, 6, 20);
 }
+
+
+function resize_things(){
+     canvas.width = 0.6*window.innerWidth;
+     canvas.height = window.innerHeight;
+
+     document.getElementById("rightTab").style.width = 0.4*window.innerWidth-20;
+     document.getElementById("my_camera").style.width = 0.4*window.innerWidth-20;
+     document.getElementById("my_camera").style.height = 0.75*(0.4*window.innerWidth-20);
+     document.querySelector("#my_camera video").style.width = 0.4*window.innerWidth-20;
+     document.querySelector("#my_camera video").style.height = 0.75*(0.4*window.innerWidth-20);
+}
+window.onresize = resize_things;
