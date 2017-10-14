@@ -16,11 +16,13 @@ img_element.onload = function(){
      image_ready = true;
      start_gallery();
 }
+img_element.src = "img/img_the_scream.jpg";
 function start_gallery(){
      if(!image_ready || !comments_ready)
           return;
-
-     ctx.font = '26px "Trebuchet MS", Helvetica, sans-serif';
+     ctx.font = "'Oxygen', sans-serif";
+     pctx.font = "'Oxygen', sans-serif";
+     ctx2.font = "'Oxygen', sans-serif";
      var image_data = get_image_data(img_element);
      put_image_in_center(image_data);
 }
@@ -51,30 +53,36 @@ function draw_images(){
      for(var y=0; y<3; y++){
           for(var x=0; x<=2*maxX; x++){
                var imgData = half_images_to_image(coords_x[x], coords_y[y]);
-               var full_comment = get_comment_for_image(imgData);
                var cmt1, cmt2;
-               if(full_comment != ""){
-                    var words = full_comment.split(" ");
-                    var str = words[0];
-                    var i;
-                    for(i=1; i<words.length; i++){
-                         if(ctx.measureText(str + " " + words[i]).width > 123){
-                              break;
-                         }
-                         str += " " + words[i];
-                    }
-                    cmt1 = str;
-                    cmt2 = "";
-                    for(var j=i; j<words.length; j++){
-                         cmt2 += " "+words[j];
-                    }
-               }else{
-                    cmt1 = "";
-                    cmt2 = "";
-               }
+               [cmt1, cmt2] = get_text_lines(get_comment_for_image(imgData));
                draw_image_from_data_without_dom(imgData, offsetX+x*133, 5+y*133, cmt1, cmt2);
           }
      }
+     draw_scrollbars();
+     draw_image_from_data_post(half_images_to_image(current_x, current_y), 0, 0, "", "");
+}
+function get_text_lines(full_comment){
+     var cmt1, cmt2;
+     if(full_comment != ""){
+          var words = full_comment.split(" ");
+          var str = words[0];
+          var i;
+          for(i=1; i<words.length; i++){
+               if(ctx.measureText(str + " " + words[i]).width > 123){
+                    break;
+               }
+               str += " " + words[i];
+          }
+          cmt1 = str;
+          cmt2 = "";
+          for(var j=i; j<words.length; j++){
+               cmt2 += " "+words[j];
+          }
+     }else{
+          cmt1 = "";
+          cmt2 = "";
+     }
+     return [cmt1, cmt2];
 }
 
 function get_image_data(img){
@@ -92,27 +100,6 @@ function draw_image(img, screen_x, screen_y, text1, text2){
      ctx.fillText(text1, screen_x+10, screen_y+2*110);
      ctx.fillText(text2, screen_x+10, screen_y+2*124);
 }
-
-function draw_image_from_data_with_dom(imgData, screen_x, screen_y, text1, text2){
-     ctx2.putImageData(imgData, 0, 0);
-     var new_img_element = document.createElement("img");
-     new_img_element.onload = function(){
-          ctx.drawImage(new_img_element, screen_x, screen_y);
-
-          ctx.fillStyle = "white";
-          ctx.fillRect(screen_x, screen_y+95, 128, 33);
-
-          ctx.fillStyle = "black"
-          ctx.font = "13px Arial";
-          ctx.fillText(text1, screen_x+10, screen_y+110);
-          ctx.fillText(text2, screen_x+10, screen_y+124);
-
-          draw_count++;
-          if(draw_count == draw_count_target)
-               draw_scrollbars();
-     }
-     new_img_element.src = canvas2.toDataURL();
-}
 function draw_image_from_data_without_dom(imgData, screen_x, screen_y, text1, text2){
      ctx2.putImageData(imgData, 0, 0);
 
@@ -122,28 +109,20 @@ function draw_image_from_data_without_dom(imgData, screen_x, screen_y, text1, te
      ctx.fillRect(screen_x, screen_y+95, 128, 33);
 
      ctx.fillStyle = "black"
-     ctx.font = '13px "Trebuchet MS", Helvetica, sans-serif';
      ctx.fillText(text1, screen_x+5, screen_y+110);
      ctx.fillText(text2, screen_x+5, screen_y+124);
-
-     draw_count++;
-     if(draw_count == draw_count_target)
-          draw_scrollbars();
 }
-function draw_image_from_data_no_resize(imgData, screen_x, screen_y, text1, text2){
-     ctx.putImageData(imgData, screen_x, screen_y);
+function draw_image_from_data_post(imgData, screen_x, screen_y, text1, text2){
+     ctx2.putImageData(imgData, 0, 0);
 
-     ctx.fillStyle = "white";
-     ctx.fillRect(screen_x, screen_y+95, 128, 33);
+     pctx.drawImage(canvas2, screen_x, screen_y);
 
-     ctx.fillStyle = "black"
-     ctx.font = "13px Arial";
-     ctx.fillText(text1, screen_x+10, screen_y+110);
-     ctx.fillText(text2, screen_x+10, screen_y+124);
+     pctx.fillStyle = "white";
+     pctx.fillRect(screen_x, screen_y+95, 128, 33);
 
-     draw_count++;
-     if(draw_count == draw_count_target)
-          draw_scrollbars();
+     pctx.fillStyle = "black"
+     pctx.fillText(text1, screen_x+5, screen_y+110);
+     pctx.fillText(text2, screen_x+5, screen_y+124);
 }
 
 function next_half_image(imgData){
@@ -258,7 +237,7 @@ function resize_things(){
           scale = canvas.height/(3*133+5);
           ctx.scale(scale, scale);
      }else{
-          canvas.width = 0.6*window.innerWidth;
+          canvas.width = 0.6*window.innerWidth+1;
           canvas.height = window.innerHeight;
           scale = canvas.height/(3*133+5);
           ctx.scale(scale, scale);
@@ -270,6 +249,12 @@ function resize_things(){
                document.querySelector("#my_camera video").style.width = 0.4*window.innerWidth-90;
                document.querySelector("#my_camera video").style.height = 0.75*(0.4*window.innerWidth-90);
           }
+
+          postCanvas.width  = Math.min(0.4*window.innerWidth-90, 300);
+          postCanvas.height = postCanvas.width;
+          ghostComment.style.width  = postCanvas.width;
+          ghostComment.style.height = postCanvas.width;
+          pctx.scale(postCanvas.width/128, postCanvas.width/128);
      }
      if(loaded)
           draw_images();
