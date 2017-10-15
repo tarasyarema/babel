@@ -5,6 +5,8 @@
 
 #rightMostTab {
 	position: absolute;
+	border:solid red;
+	border-width:0 5px;
 	top: 0;
 	right: 0;
 	bottom: 0;
