@@ -68,8 +68,9 @@ function draw_images(){
      }
      draw_scrollbars();
      var imgData = half_images_to_image(current_x, current_y);
-     draw_image_from_data_post(imgData, 0, 0, "", "");
-     togglePostButton(get_comment_for_image(imgData) != "");
+     var txt = get_comment_for_image(imgData);
+     togglePostButton(txt != "", txt);
+     draw_possible_comment();
 }
 function get_text_lines(full_comment){
      var cmt1, cmt2;
@@ -111,6 +112,9 @@ function draw_image_from_data_without_dom(imgData, screen_x, screen_y, text1, te
      ctx.fillStyle = "black"
      ctx.fillText(text1, screen_x+5, screen_y+110);
      ctx.fillText(text2, screen_x+5, screen_y+124);
+
+     ctx.strokeStyle = "#CCC";
+     ctx.strokeRect(screen_x, screen_y, 128, 128);
 }
 function draw_image_from_data_post(imgData, screen_x, screen_y, text1, text2){
      ctx2.putImageData(imgData, 0, 0);
@@ -133,6 +137,9 @@ function draw_image_posts(img, screen_x, screen_y, text1, text2){
      lpctx.fillStyle = "black"
      lpctx.fillText(text1, screen_x+5, screen_y+110);
      lpctx.fillText(text2, screen_x+5, screen_y+124);
+
+     lpctx.strokeStyle = "#CCC";
+     lpctx.strokeRect(screen_x, screen_y, 128, 128);
 }
 
 function next_half_image(imgData){
