@@ -21,7 +21,8 @@ function get_comment_for_image(imgData){
 var postCanvas = document.getElementById("postCanvas");
 var pctx = postCanvas.getContext("2d");
 var ghostComment = document.getElementById("ghostComment");
-ghostComment.onkeyup = function(e){
+ghostComment.onkeyup = draw_possible_comment;
+function draw_possible_comment(){
      var cmt1, cmt2;
      [cmt1, cmt2] = get_text_lines(ghostComment.value);
      if(pctx.measureText(cmt2).width >= 123){
@@ -29,8 +30,7 @@ ghostComment.onkeyup = function(e){
           [cmt1, cmt2] = get_text_lines(postText);
      }
      draw_image_from_data_post(half_images_to_image(current_x, current_y), 0, 0, cmt1, cmt2);
-
-};
+}
 
 document.getElementById("postComment").onclick = function(){
      if(ghostComment.value != ""){
@@ -45,11 +45,13 @@ document.getElementById("postComment").onclick = function(){
           });
      }
 }
-function togglePostButton(state){
-     if(state)
+function togglePostButton(state, text){
+     if(state){
           document.getElementById("postComment").setAttribute("disabled", "disabled");
-     else {
+          ghostComment.value = text;
+     }else{
           document.getElementById("postComment").removeAttribute("disabled");
+          ghostComment.value = "";
      }
 }
 var lastPostsCanvas, lpctx;

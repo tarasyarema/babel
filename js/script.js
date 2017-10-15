@@ -68,8 +68,9 @@ function draw_images(){
      }
      draw_scrollbars();
      var imgData = half_images_to_image(current_x, current_y);
-     draw_image_from_data_post(imgData, 0, 0, "", "");
-     togglePostButton(get_comment_for_image(imgData) != "");
+     var txt = get_comment_for_image(imgData);
+     togglePostButton(txt != "", txt);
+     draw_possible_comment();
 }
 function get_text_lines(full_comment){
      var cmt1, cmt2;
