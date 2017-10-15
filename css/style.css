@@ -6,7 +6,7 @@
 #rightMostTab {
 	position: absolute;
 	z-index: 1000;
-	border-left:10px solid #E8E8E9;
+	border-left:1px solid #ccc;
 	top: 0;
 	right: 0;
 	bottom: 0;
@@ -22,7 +22,7 @@
 #rightTab {
 	position: absolute;
 	z-index: 1000;
-	border-left: 10px solid #E8E8E9;
+	border-left: 10px solid #ccc;
 	top: 10;
 	right: 69;
 	bottom: 0;
