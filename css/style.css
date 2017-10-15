@@ -79,13 +79,6 @@ video {
 	display: inline;
 }
 
-#webcam_div {
-	float: left;
-}
-
-#upload_img_div {
-	float: right;
-}
 
 button {
 	color: white;
@@ -121,4 +114,13 @@ input[type="file"] {
 
 #about{
 	word-wrap: break-word;
+}
+#titletext {
+	opacity: 0.5;
+	position: absolute;
+	z-index: 999;
+	top: 10;
+	left: 10;
+	font-weight: 1000;
+	font-size: 32px;
 }
