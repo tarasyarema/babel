@@ -23,7 +23,8 @@ function get_file(){
 	     var new_img_element = document.getElementById("uploaded_image");
 		new_img_element.onload = function(){
 			var image_data = get_image_data(new_img_element);
-			put_image_in_center(image_data);
+			var half_images = image_to_half_images(image_data);
+			start_animation_towards(half_images[0], half_images[1]);
 		}
 		new_img_element.src = data_uri;
 	}
