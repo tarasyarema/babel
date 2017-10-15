@@ -112,6 +112,9 @@ function draw_image_from_data_without_dom(imgData, screen_x, screen_y, text1, te
      ctx.fillStyle = "black"
      ctx.fillText(text1, screen_x+5, screen_y+110);
      ctx.fillText(text2, screen_x+5, screen_y+124);
+
+     ctx.strokeStyle = "#CCC";
+     ctx.strokeRect(screen_x, screen_y, 128, 128);
 }
 function draw_image_from_data_post(imgData, screen_x, screen_y, text1, text2){
      ctx2.putImageData(imgData, 0, 0);
@@ -134,6 +137,9 @@ function draw_image_posts(img, screen_x, screen_y, text1, text2){
      lpctx.fillStyle = "black"
      lpctx.fillText(text1, screen_x+5, screen_y+110);
      lpctx.fillText(text2, screen_x+5, screen_y+124);
+
+     lpctx.strokeStyle = "#CCC";
+     lpctx.strokeRect(screen_x, screen_y, 128, 128);
 }
 
 function next_half_image(imgData){
