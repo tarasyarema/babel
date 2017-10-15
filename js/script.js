@@ -249,7 +249,7 @@ function draw_scrollbars(){
 var loaded = false;
 function resize_things(){
      if(bar_invisible){
-          canvas.width = window.innerWidth-69;
+          canvas.width = window.innerWidth-68;
           canvas.height = window.innerHeight;
           scale = canvas.height/(3*133+5);
           ctx.scale(scale, scale);

@@ -21,7 +21,7 @@
 #rightTab {
 	position: absolute;
 	z-index: 999;
-	border-left: 10px solid #ccc;
+	border-left: 1px solid #ccc;
 	top: 10;
 	right: 69;
 	bottom: 0;
