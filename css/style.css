@@ -6,13 +6,12 @@
 #rightMostTab {
 	position: absolute;
 	z-index: 1000;
-	border-left:1px solid #ccc;
+	background: #ccc;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	width: 48px;
 	padding: 10px;
-	background: white;
 }
 
 .menuImg {
@@ -21,7 +20,7 @@
 
 #rightTab {
 	position: absolute;
-	z-index: 1000;
+	z-index: 999;
 	border-left: 10px solid #ccc;
 	top: 10;
 	right: 69;
@@ -29,10 +28,6 @@
 	width: 40%;
 	padding: 10px;
 	overflow-x: hidden;
-}
-
-#lastPostsCanvas {
-	/*position: absolute;*/
 }
 
 #leftTab {
