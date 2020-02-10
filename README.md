@@ -1,2 +1,3 @@
-# HackUPC Fall 2k17
-Lol
+# Web of Babel
+
+Made at HackUPC Fall 2017.
