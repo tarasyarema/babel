@@ -21,15 +21,8 @@ function start_gallery(){
      if(!image_ready || !comments_ready)
           return;
 
-     lastPostsCanvas = document.getElementById("lastPostsCanvas");
-     lpctx = lastPostsCanvas.getContext("2d");
-
      resize_things();
 
-     ctx.font = "'Oxygen', sans-serif";
-     pctx.font = "'Oxygen', sans-serif";
-     ctx2.font = "'Oxygen', sans-serif";
-     lpctx.font = "'Oxygen', sans-serif";
      var image_data = get_image_data(img_element);
      put_image_in_center(image_data);
      draw_last_posts();
@@ -67,10 +60,6 @@ function draw_images(){
           }
      }
      draw_scrollbars();
-     var imgData = half_images_to_image(current_x, current_y);
-     var txt = get_comment_for_image(imgData);
-     togglePostButton(txt != "", txt);
-     draw_possible_comment();
 }
 function get_text_lines(full_comment){
      var cmt1, cmt2;
@@ -96,8 +85,21 @@ function get_text_lines(full_comment){
      return [cmt1, cmt2];
 }
 
-function get_image_data(img){
-     ctx2.drawImage(img, 0, 0, 128, 95);
+// Center-crops any image, video frame or photo to 128x95 so it isn't stretched.
+function get_image_data(img, mirror){
+     var w = img.videoWidth || img.naturalWidth || img.width;
+     var h = img.videoHeight || img.naturalHeight || img.height;
+     var crop_w = Math.min(w, h*128/95);
+     var crop_h = crop_w*95/128;
+     ctx2.save();
+     ctx2.fillStyle = "white";
+     ctx2.fillRect(0, 0, 128, 95);
+     if(mirror){
+          ctx2.translate(128, 0);
+          ctx2.scale(-1, 1);
+     }
+     ctx2.drawImage(img, (w-crop_w)/2, (h-crop_h)/2, crop_w, crop_h, 0, 0, 128, 95);
+     ctx2.restore();
      return ctx2.getImageData(0, 0, 128, 95);
 }
 
@@ -115,18 +117,6 @@ function draw_image_from_data_without_dom(imgData, screen_x, screen_y, text1, te
 
      ctx.strokeStyle = "#CCC";
      ctx.strokeRect(screen_x, screen_y, 128, 128);
-}
-function draw_image_from_data_post(imgData, screen_x, screen_y, text1, text2){
-     ctx2.putImageData(imgData, 0, 0);
-
-     pctx.drawImage(canvas2, screen_x, screen_y);
-
-     pctx.fillStyle = "white";
-     pctx.fillRect(screen_x, screen_y+95, 128, 33);
-
-     pctx.fillStyle = "black";
-     pctx.fillText(text1, screen_x+5, screen_y+110);
-     pctx.fillText(text2, screen_x+5, screen_y+124);
 }
 function draw_image_posts(img, screen_x, screen_y, text1, text2){
      lpctx.drawImage(img, screen_x, screen_y);
@@ -231,8 +221,6 @@ function image_to_half_images(imgData){
      return [result1, result2];
 }
 
-var scrollbar_x = [];
-var scrollbar_y = [];
 function get_proportion_from_image(imgData){
      return ((imgData.data[0] << 16)+(imgData.data[1] << 8)+imgData.data[2])/16777216;
 }
@@ -240,43 +228,29 @@ function draw_scrollbars(){
      var place_x = 0, place_y = 0;
      place_x = 10+(canvas.width/scale -20) * get_proportion_from_image(current_x);
      place_y = 10+(canvas.height/scale-20) * get_proportion_from_image(current_y);
+     ctx.fillStyle = "rgba(0, 0, 0, 0.12)";
+     ctx.fillRect(0, canvas.height/scale-6, canvas.width/scale, 6);
+     ctx.fillRect(canvas.width/scale-6, 0, 6, canvas.height/scale);
+     ctx.fillStyle = "black";
      ctx.fillRect(place_x-10, canvas.height/scale-6, 20, 6);
      ctx.fillRect(canvas.width/scale-6, place_y-10, 6, 20);
-     scrollbar_x = [place_x-10, canvas.height/scale-6, place_x-10+20, canvas.height/scale-6+6];
-     scrollbar_y = [canvas.width/scale-6, place_y-10, canvas.width/scale-6+6, place_y-10+20];
 }
 
 var loaded = false;
+// Canvases fill their CSS box and render at device pixel ratio so text stays sharp.
 function resize_things(){
-     if(bar_invisible){
-          canvas.width = window.innerWidth-68;
-          canvas.height = window.innerHeight;
-          scale = canvas.height/(3*133+5);
-          ctx.scale(scale, scale);
-     }else{
-          canvas.width = 0.6*window.innerWidth+1;
-          canvas.height = window.innerHeight;
-          scale = canvas.height/(3*133+5);
-          ctx.scale(scale, scale);
+     var dpr = window.devicePixelRatio || 1;
+     canvas.width = canvas.clientWidth*dpr;
+     canvas.height = canvas.clientHeight*dpr;
+     scale = canvas.height/(3*133+5);
+     ctx.scale(scale, scale);
+     ctx.font = "10px Oxygen, sans-serif";
 
-          document.getElementById("rightTab").style.width = 0.4*window.innerWidth-90;
-          document.getElementById("my_camera").style.width = 0.4*window.innerWidth-90;
-          document.getElementById("my_camera").style.height = 0.75*(0.4*window.innerWidth-90);
-          if(document.querySelector("#my_camera video")){
-               document.querySelector("#my_camera video").style.width = 0.4*window.innerWidth-90;
-               document.querySelector("#my_camera video").style.height = 0.75*(0.4*window.innerWidth-90);
-          }
-
-          postCanvas.width  = 0.3*window.innerWidth-90;
-          postCanvas.height = postCanvas.width;
-          ghostComment.style.width  = postCanvas.width;
-          ghostComment.style.height = postCanvas.width;
-          pctx.scale(postCanvas.width/128, postCanvas.width/128);
-
-          lastPostsCanvas.width = 0.4*window.innerWidth-90;
-          lastPostsCanvas.height = lastPostsCanvas.width*2.5;
-          lpctx.scale(lastPostsCanvas.width/261, lastPostsCanvas.width/261);
-     }
+     var rows = Math.max(1, Math.ceil(Math.min(Object.keys(all_comments).length, 10)/2));
+     lastPostsCanvas.width = lastPostsCanvas.clientWidth*dpr;
+     lastPostsCanvas.height = lastPostsCanvas.width*rows*133/261;
+     lpctx.scale(lastPostsCanvas.width/261, lastPostsCanvas.width/261);
+     lpctx.font = "10px Oxygen, sans-serif";
 
      if(loaded){
           draw_images();
@@ -366,23 +340,52 @@ function do_animation_for_y(){
 
 
 
+// Pointer events cover mouse, touch and pen. The whole bottom and right edges
+// act as scrollbar tracks so they are easy to grab with a finger.
 var on_scroll = 0;
-window.onmousedown = function(e){
-     var cx = e.clientX/scale;
-     var cy = e.clientY/scale;
-     if(cx >= scrollbar_x[0] && cy >= scrollbar_x[1] && cx <= scrollbar_x[2] && cy <= scrollbar_x[3]){
+var swipe_start = null;
+function canvas_point(e){
+     var rect = canvas.getBoundingClientRect();
+     var ratio = canvas.width/rect.width/scale;
+     return [(e.clientX-rect.left)*ratio, (e.clientY-rect.top)*ratio];
+}
+canvas.onpointerdown = function(e){
+     if(!loaded)
+          return;
+     var p = canvas_point(e);
+     swipe_start = null;
+     if(p[1] >= canvas.height/scale-14)
           on_scroll = 1;
-     }else if(cx >= scrollbar_y[0] && cy >= scrollbar_y[1] && cx <= scrollbar_y[2] && cy <= scrollbar_y[3]){
+     else if(p[0] >= canvas.width/scale-14)
           on_scroll = 2;
-     }else
+     else{
           on_scroll = 0;
+          swipe_start = p;
+     }
+     canvas.setPointerCapture(e.pointerId);
+     canvas.onpointermove(e);
 }
-window.onmouseup = function(){
+canvas.onpointerup = canvas.onpointercancel = function(e){
+     if(swipe_start && e.type == "pointerup"){
+          var p = canvas_point(e);
+          var dx = p[0]-swipe_start[0], dy = p[1]-swipe_start[1];
+          if(Math.max(Math.abs(dx), Math.abs(dy)) > 20){
+               if(Math.abs(dx) > Math.abs(dy))
+                    current_x = dx < 0 ? next_half_image(current_x) : previous_half_image(current_x);
+               else
+                    current_y = dy < 0 ? next_half_image(current_y) : previous_half_image(current_y);
+               draw_images();
+          }
+     }
      on_scroll = 0;
+     swipe_start = null;
 }
-window.onmousemove = function(e){
+canvas.onpointermove = function(e){
+     if(on_scroll == 0)
+          return;
+     var pt = canvas_point(e);
      if(on_scroll == 1){
-          var p = (e.clientX-10*scale)/(canvas.width-20*scale);
+          var p = (pt[0]-10)/(canvas.width/scale-20);
           if(p > 1)
                p = 1;
           else if(p < 0)
@@ -390,7 +393,7 @@ window.onmousemove = function(e){
           current_x = load_half_image_at_proportion(p);
           draw_images();
      }else if(on_scroll == 2){
-          var p = (e.clientY-10*scale)/(canvas.height-20*scale);
+          var p = (pt[1]-10)/(canvas.height/scale-20);
           if(p > 1)
                p = 1;
           else if(p < 0)
