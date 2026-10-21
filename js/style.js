@@ -1,39 +1,37 @@
-var bar_invisible = true;
-var active_tab = 0;
-$(function(){
-	Webcam.set({
-		width: "320",
-		height: "240",
-		flip_horiz: true,
-		fps: 60
-	});
-	Webcam.attach('#my_camera');
+var active_tab = null;
+var tab_titles = {imageSearch: "Find your photo", comments: "Last comments", about: "About"};
 
-	$("#rightTab").hide();
+function open_tab(tabid){
+	stop_camera();
+	$(".menuTab").hide();
+	$("div#"+tabid).show();
+	$("#tabTitle").text(tab_titles[tabid]);
+	$(".menuImg").removeClass("active");
+	$(".menuImg[tabid="+tabid+"]").addClass("active");
+	$("body").addClass("panel-open");
+	active_tab = tabid;
+	resize_things();
+}
+
+function close_panel(){
+	stop_camera();
+	$(".menuImg").removeClass("active");
+	$("body").removeClass("panel-open");
+	active_tab = null;
+	resize_things();
+}
+
+$(function(){
 	$(".menuImg").click(function(){
 		var tabid = $(this).attr("tabid");
-		var new_active_tab;
-		if(tabid == "imageSearch")
-			new_active_tab = 1;
-		else if(tabid == "about")
-			new_active_tab = 2;
+		if(active_tab == tabid)
+			close_panel();
 		else
-			new_active_tab = 3;
-		if(bar_invisible){
-			$("#rightTab").show();
-			bar_invisible = false;
-			resize_things();
-
-			$(".menuTab").hide();
-			$("div#"+tabid).show();
-		}else if(active_tab == new_active_tab){
-			$("#rightTab").hide();
-			bar_invisible = true;
-			resize_things();
-		}else{
-			$(".menuTab").hide();
-			$("div#"+tabid).show();
-		}
-		active_tab = new_active_tab;
+			open_tab(tabid);
+	});
+	$("#closeTab").click(close_panel);
+	$(document).keydown(function(e){
+		if(e.key == "Escape" && active_tab)
+			close_panel();
 	});
 });
